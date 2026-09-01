@@ -6,13 +6,10 @@ using HarmonyLib;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
-using TaleWorlds.CampaignSystem.Naval;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.CampaignSystem.Map;
 using TaleWorlds.CampaignSystem.Settlements;
 using TaleWorlds.Core;
-using NavalDLC.CampaignBehaviors;
-using NavalDLC.CharacterDevelopment;
 using BannerlordTwitch.Util;
 using TaleWorlds.CampaignSystem.GameComponents;
 using TaleWorlds.CampaignSystem.Election;
@@ -548,26 +545,7 @@ namespace BLTAdoptAHero
 
     #endregion
 
-    #region OnShipOwnerChanged
-
-    [HarmonyPatch(typeof(ShipTradeCampaignBehavior), "OnShipOwnerChanged")]
-        static class BLT_Suppress_OnShipOwnerChanged_Exception
-        {
-            static Exception Finalizer(Exception __exception)
-            {
-                // If the method threw, swallow it completely
-                if (__exception != null)
-                {
-                    // Optional logging (disabled for now)
-                    // Log.Trace("[BLT] Suppressed exception in OnShipOwnerChanged:\n" + __exception);
-                    return null;
-                }
-
-                return null;
-            }
-        }
-
-    #endregion
+    // OnShipOwnerChanged patch removed (NonWarsails) - ShipTradeCampaignBehavior is a Warsails type
 
     #region TownFoodStocks
 

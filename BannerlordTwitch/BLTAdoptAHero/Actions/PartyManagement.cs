@@ -1,4 +1,5 @@
 ﻿using System;
+using BLTAdoptAHero.Actions.Util;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
@@ -23,8 +24,6 @@ using Helpers;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
-using NavalDLC.CharacterDevelopment;
-using NavalDLC.CampaignBehaviors;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
@@ -501,8 +500,8 @@ namespace BLTAdoptAHero.Actions
             if (h.HeroState == Hero.CharacterStates.Fugitive) { onFailure("Your hero is fugitive"); return; }
             if (party != null) { onFailure("You already have a party"); return; }
             if (h.IsPrisoner) { onFailure("You are prisoner"); return; }
-            if (!h.IsClanLeader && h.Clan.WarPartyComponents.Count >= h.Clan.CommanderLimit)
-            { onFailure($"Clan party limit: {h.Clan.CommanderLimit}"); return; }
+            if (!h.IsClanLeader && h.Clan.WarPartyComponents.Count >= h.Clan.WarPartyLimitCompat())
+            { onFailure($"Clan party limit: {h.Clan.WarPartyLimitCompat()}"); return; }
 
             if (h.GovernorOf != null) ChangeGovernorAction.RemoveGovernorOfIfExists(h.GovernorOf);
 
@@ -546,7 +545,7 @@ namespace BLTAdoptAHero.Actions
             var comp = PartyBaseHelper.PrintRegularTroopCategories(party.MemberRoster) ?? new TextObject("Unknown");
             var roster = party.MemberRoster.GetTroopRoster();
             double tier = roster.Sum(r => r.Character.Tier * r.Number) / (double)Math.Max(1, roster.Sum(r => r.Number));
-            var nav = party.IsCurrentlyAtSea ? MobileParty.NavigationType.Naval : MobileParty.NavigationType.Default;
+            var nav = MobileParty.NavigationType.Default; // Naval check removed (NonWarsails)
             var near = SettlementHelper.FindNearestFortificationToMobileParty(party, nav);
 
             var sb = new StringBuilder();
@@ -1458,7 +1457,7 @@ namespace BLTAdoptAHero.Actions
                 leaderParty = candidates.GetRandomElement();
 
             var vassalClans = VassalBehavior.Current?.GetVassalClans(h.Clan) ?? new List<Clan>();
-            var modelParties = Campaign.Current.Models.ArmyManagementCalculationModel.GetMobilePartiesToCallToArmy(leaderParty);
+            var modelParties = Campaign.Current.GetPartiesToCallToArmyCompat(leaderParty);
             var members = candidates
                 .Where(p => p != leaderParty)
                 .Concat(modelParties.Where(p => p != leaderParty && p != null))
@@ -2112,7 +2111,7 @@ namespace BLTAdoptAHero.Actions
             if (BLTAdoptAHeroCampaignBehavior.Current.GetHeroGold(h) < settings.ArmyPrice)
             { onFailure(Naming.NotEnoughGold(settings.ArmyPrice, BLTAdoptAHeroCampaignBehavior.Current.GetHeroGold(h))); return; }
 
-            var nav = party.IsCurrentlyAtSea ? MobileParty.NavigationType.Naval : MobileParty.NavigationType.Default;
+            var nav = MobileParty.NavigationType.Default; // Naval check removed (NonWarsails)
             var near = SettlementHelper.FindNearestSettlementToMobileParty(party, nav) ?? h.HomeSettlement;
             var gather = target ?? near;
 
@@ -2130,9 +2129,8 @@ namespace BLTAdoptAHero.Actions
                             && p != party && p.Army == null && p.AttachedTo == null
                             && p.LeaderHero != null && p.MapEvent == null && !p.IsDisbanding)
                         .ToList();
-                    var modelParties = Campaign.Current.Models.ArmyManagementCalculationModel
-                        .GetMobilePartiesToCallToArmy(party)
-                        .Where(p => p != null);
+                    var modelPartiesRaw = Campaign.Current.GetPartiesToCallToArmyCompat(party);
+                    var modelParties = modelPartiesRaw.Where(p => p != null);
                     var ldrPos = party.GetPosition2D;
                     var sorted = vassalParties.Concat(modelParties).Distinct()
                         .OrderBy(p => p.GetPosition2D.Distance(ldrPos));

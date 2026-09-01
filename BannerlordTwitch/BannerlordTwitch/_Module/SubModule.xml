@@ -12,7 +12,6 @@
 		<DependedModule Id="SandBoxCore"/>
 		<DependedModule Id="Sandbox"/>
 		<DependedModule Id="StoryMode"/>
-		<DependedModule Id="NavalDLC"/>
 		<DependedModule Id="CustomBattle"/>
 	</DependedModules>
 	<SubModules>
@@ -34,7 +33,6 @@
 		<DependedModuleMetadata id="SandBoxCore" order="LoadBeforeThis" />
 		<DependedModuleMetadata id="Sandbox" order="LoadBeforeThis" />
 		<DependedModuleMetadata id="StoryMode" order="LoadBeforeThis" />
-		<DependedModuleMetadata id="NavalDLC" order="LoadBeforeThis" />
 		<DependedModuleMetadata id="CustomBattle" order="LoadBeforeThis" />
 	</DependedModuleMetadatas>
 	<Xmls>

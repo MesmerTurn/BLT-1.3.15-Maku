@@ -277,18 +277,16 @@ namespace BLTAdoptAHero
 
                 var rosters = MBObjectManager.Instance.GetObjectTypeList<MBEquipmentRoster>();
 
-                // 1) Try noble templates first
+                // 1) Try lord templates first
                 var roster = rosters.FirstOrDefault(r =>
                     r.EquipmentCulture == hero.Culture &&
                     r.HasEquipmentFlags(EquipmentFlags.IsNobleTemplate) &&
                     r.HasEquipmentFlags(EquipmentFlags.IsCombatantTemplate));
 
-                // 2) Fallback to combatant if no noble found
+                // 2) Fallback to any template for this culture if no noble found
                 if (roster == null)
                 {
-                    roster = rosters.FirstOrDefault(r =>
-                        r.EquipmentCulture == hero.Culture &&
-                        r.HasEquipmentFlags(EquipmentFlags.IsCombatantTemplate));
+                    roster = rosters.FirstOrDefault(r => r.EquipmentCulture == hero.Culture);
                 }
 
                 if (roster?.AllEquipments?.Count > 0)

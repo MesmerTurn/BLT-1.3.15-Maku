@@ -1,4 +1,5 @@
 ﻿using System;
+using BLTAdoptAHero.Actions.Util;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -741,7 +742,7 @@ namespace BLTAdoptAHero.Actions
                     continue;
 
                 StanceLink stance = adoptedHero.Clan.Kingdom.GetStanceWith(k);
-                if (tradeBehavior.HasTradeAgreement(adoptedHero.Clan.Kingdom, k))
+                if (tradeBehavior.HasTradeAgreementCompat(adoptedHero.Clan.Kingdom, k))
                 {
                     var tradeDate = tradeBehavior.GetTradeAgreementEndDate(adoptedHero.Clan.Kingdom, k);
                     int tradeDays = (int)(tradeDate - CampaignTime.Now).ToDays;

@@ -184,7 +184,10 @@ namespace BLTAdoptAHero.Models
 
         public override List<Ship> FindAppropriateInitialShipsForMobileParty(MobileParty party, PartyTemplateObject partyTemplate)
         {
-            return _previous.FindAppropriateInitialShipsForMobileParty(party, partyTemplate);
+            // FindAppropriateInitialShipsForMobileParty is abstract on the base (vanilla)
+            // PartySizeLimitModel, not just a Warsails addition, so it must still be overridden
+            // here even without Warsails - just return no ships (NonWarsails).
+            return new List<Ship>();
         }
     }
 

@@ -5,6 +5,7 @@ using BannerlordTwitch.Helpers;
 using BannerlordTwitch.Localization;
 using BannerlordTwitch.Util;
 using BLTAdoptAHero.UI;
+using BLTAdoptAHero.Behaviors;
 using HarmonyLib;
 using JetBrains.Annotations;
 using TaleWorlds.CampaignSystem;
@@ -450,6 +451,13 @@ namespace BLTAdoptAHero
 
         public void ApplyKillEffects(Hero hero, Agent killer, Agent killed, AgentState state, int goldPerKill, int healPerKill, int xpPerKill, float subBoost, float? relativeLevelScaling, float? levelScalingCap, float MinimumGoldPerKill)
         {
+            // Nemesis tracking: an adopted hero killing an enemy lord settles (or starts paying down) a rivalry.
+            var killedHero = (killed?.Character as CharacterObject)?.HeroObject;
+            if (killedHero != null)
+            {
+                BLTNemesisBehavior.Current?.RecordVictory(hero, killedHero);
+            }
+
             goldPerKill = (int)(goldPerKill * subBoost);
             healPerKill = (int)(healPerKill * subBoost);
             xpPerKill = (int)(xpPerKill * subBoost);

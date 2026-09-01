@@ -60,11 +60,7 @@ namespace BLTAdoptAHero.Actions
                 onFailure("{=TESTING}No mission!".Translate());
                 return;
             }
-            if (Mission.Current.IsNavalBattle)
-            {
-                onFailure("Cannot change formation in naval battle");
-                return;
-            }
+            // Naval battle check removed (NonWarsails)
             if (MissionHelpers.InTournament())
             {
                 onFailure("Cannot change formation in tournament");

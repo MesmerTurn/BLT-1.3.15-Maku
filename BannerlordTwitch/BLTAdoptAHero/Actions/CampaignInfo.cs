@@ -1,4 +1,5 @@
 ﻿using System;
+using BLTAdoptAHero.Actions.Util;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -161,7 +162,7 @@ namespace BLTAdoptAHero
                     continue;
 
                 StanceLink stance = desiredKingdom.GetStanceWith(k);
-                if (tradeBehavior.HasTradeAgreement(desiredKingdom, k))
+                if (tradeBehavior.HasTradeAgreementCompat(desiredKingdom, k))
                 {
                     var tradeDate = tradeBehavior.GetTradeAgreementEndDate(desiredKingdom, k);
                     int tradeDays = (int)(tradeDate - CampaignTime.Now).ToDays;
@@ -567,7 +568,7 @@ namespace BLTAdoptAHero
                         ships += party.Ships.Count;
                     }
                 }
-                clanSb.Append("{=Ib213Hp9}Parties: {cparties}/{mparties} | ".Translate(("cparties", parties), ("mparties", desiredClan.CommanderLimit)));
+                clanSb.Append("{=Ib213Hp9}Parties: {cparties}/{mparties} | ".Translate(("cparties", (object)parties), ("mparties", (object)desiredClan.WarPartyLimitCompat())));
                 clanSb.Append("{=TESTING}Ships: {ships} |".Translate(("ships", ships)));
                 if (desiredClan.Fiefs.Count >= 1)
                 {

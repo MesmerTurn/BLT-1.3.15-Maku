@@ -1,4 +1,5 @@
 ﻿using System;
+using BLTAdoptAHero.Actions.Util;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -2566,7 +2567,7 @@ namespace BLTAdoptAHero
 
             // Check for existing trade agreement
             TradeAgreementsCampaignBehavior tradeBehavior = Campaign.Current.GetCampaignBehavior<TradeAgreementsCampaignBehavior>();
-            if (tradeBehavior.HasTradeAgreement(kingdom, target))
+            if (tradeBehavior.HasTradeAgreementCompat(kingdom, target))
             {
                 onFailure($"Already have trade agreement with {target.Name}");
                 return;

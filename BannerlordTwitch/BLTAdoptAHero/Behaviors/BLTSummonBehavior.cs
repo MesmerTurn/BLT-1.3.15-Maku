@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BannerlordTwitch.Helpers;
 using BannerlordTwitch.Util;
+using BLTAdoptAHero.Behaviors;
 using HarmonyLib;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.AgentOrigins;
@@ -10,7 +11,6 @@ using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.Core;
 using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
-using NavalDLC.Missions.MissionLogics;
 
 namespace BLTAdoptAHero
 {
@@ -145,6 +145,13 @@ namespace BLTAdoptAHero
                 if (adoptedHero != null && (affectedAgent.State == AgentState.Unconscious || affectedAgent.State == AgentState.Killed))
                 {
                     HeroDeathSpecifics[adoptedHero] = (affectorAgent, blow);
+
+                    // Nemesis tracking: an enemy lord who beat an adopted hero is remembered as a rival.
+                    var enemyHero = (affectorAgent?.Character as CharacterObject)?.HeroObject;
+                    if (enemyHero != null)
+                    {
+                        BLTNemesisBehavior.Current?.RecordDefeat(adoptedHero, enemyHero);
+                    }
                 }
 
                 // Set the final retinue states
@@ -411,7 +418,7 @@ namespace BLTAdoptAHero
         {
             return Mission.Current.Mode != MissionMode.Stealth
                    && !MissionHelpers.InSiegeMission()
-                   && Mission.Current?.IsNavalBattle == false
+                   // Naval battle check removed (NonWarsails)
                    && formationClass is
                        FormationClass.Cavalry or
                        FormationClass.LightCavalry or
@@ -421,15 +428,6 @@ namespace BLTAdoptAHero
 
         public static bool RetinueAllowed() => MissionHelpers.InSiegeMission() || MissionHelpers.InFieldBattleMission();
 
-        [HarmonyPatch(typeof(ShipAgentSpawnLogic), "IsAnyTeamsUnfilled")]
-        public static class Patch_IsAnyTeamsUnfilled
-        {
-            static bool Prefix(ref bool __result)
-            {
-                // Always return true, ignoring original logic
-                __result = true;
-                return false; // skip original method
-            }
-        }
+        // Patch_IsAnyTeamsUnfilled removed (NonWarsails) - ShipAgentSpawnLogic is a Warsails type
     }
 }

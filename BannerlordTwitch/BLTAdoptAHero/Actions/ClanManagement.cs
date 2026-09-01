@@ -1,4 +1,5 @@
 ﻿using System;
+using BLTAdoptAHero.Actions.Util;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
@@ -22,8 +23,6 @@ using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
-using NavalDLC.GameComponents;
-using NavalDLC.CampaignBehaviors;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace BLTAdoptAHero.Actions
@@ -719,7 +718,7 @@ namespace BLTAdoptAHero.Actions
                     ships += party.Ships.Count;
                 }
             }
-            clanStats.Append("{=Ib213Hp9}| Parties: {cparties}/{mparties} | ".Translate(("cparties", parties), ("mparties", adoptedHero.Clan.CommanderLimit)));
+            clanStats.Append("{=Ib213Hp9}| Parties: {cparties}/{mparties} | ".Translate(("cparties", (object)parties), ("mparties", (object)adoptedHero.Clan.WarPartyLimitCompat())));
             clanStats.Append("{=TESTING}Ships: {ships} ".Translate(("ships", ships)));
             if (adoptedHero.Clan.Fiefs.Count >= 1)
             {

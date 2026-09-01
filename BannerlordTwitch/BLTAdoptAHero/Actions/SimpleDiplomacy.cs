@@ -1,4 +1,5 @@
 ﻿using System;
+using BLTAdoptAHero.Actions.Util;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -255,7 +256,7 @@ namespace BLTAdoptAHero
                             {
                                 allianceBehavior.EndAlliance(kingdom, desiredKingdom);
                             }
-                            if (tradeBehavior.HasTradeAgreement(kingdom, desiredKingdom))
+                            if (tradeBehavior.HasTradeAgreementCompat(kingdom, desiredKingdom))
                             {
                                 tradeBehavior.EndTradeAgreement(kingdom, desiredKingdom);
                             }
@@ -512,7 +513,7 @@ namespace BLTAdoptAHero
                             onFailure($"At war with {desiredKingdom}");
                             return;
                         }
-                        if (tradeBehavior.HasTradeAgreement(kingdom, desiredKingdom))
+                        if (tradeBehavior.HasTradeAgreementCompat(kingdom, desiredKingdom))
                         {
                             onFailure($"Already trading with {desiredKingdom}");
                             return;

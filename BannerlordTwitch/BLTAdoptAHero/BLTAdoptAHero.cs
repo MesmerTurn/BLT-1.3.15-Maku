@@ -215,6 +215,8 @@ namespace BLTAdoptAHero
                     campaignStarter.AddBehavior(new PartyOrderBehavior());
                     campaignStarter.AddBehavior(new TrainingBehavior());
                     campaignStarter.AddBehavior(new CapitalBehavior());
+                    campaignStarter.AddBehavior(new BLTNemesisBehavior());
+                    campaignStarter.AddBehavior(new BLTBountyBehavior());
                     // Diplomacy
                     campaignStarter.AddBehavior(new BLTTreatyManager());         // 1. Core data
                     campaignStarter.AddBehavior(new BLTDiplomacyHelper());       // 2. Rebellion tracking
