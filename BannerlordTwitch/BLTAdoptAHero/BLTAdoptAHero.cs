@@ -64,6 +64,7 @@ namespace BLTAdoptAHero
             GlobalTournamentConfig.Register();
             GlobalHeroClassConfig.Register();
             GlobalHeroPowerConfig.Register();
+            GlobalMapEventConfig.Register();
 
             TournamentHub.Register();
             MissionInfoHub.Register();
@@ -202,6 +203,7 @@ namespace BLTAdoptAHero
                     campaignStarter.AddBehavior(new BLTTournamentQueueBehavior());
                     campaignStarter.AddBehavior(new BLTCustomItemsCampaignBehavior());
                     campaignStarter.AddBehavior(new BLTClanBehavior());
+                    campaignStarter.AddBehavior(new BLTMapEventBehavior());
                     campaignStarter.AddBehavior(new GoldIncomeBehavior()); 
                     campaignStarter.AddBehavior(new BLTSettlementUpgradeBehavior());
                     campaignStarter.AddBehavior(new ReinforcementBehavior());

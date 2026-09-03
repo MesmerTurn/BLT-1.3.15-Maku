@@ -364,6 +364,8 @@
     <Compile Include="Actions\Util\SkillRangeDef.cs" />
     <Compile Include="Actions\Nemesis.cs" />
     <Compile Include="Actions\PromoteRetinue.cs" />
+    <Compile Include="GlobalConfigs\GlobalMapEventConfig.cs" />
+    <Compile Include="Behaviors\BLTMapEventBehavior.cs" />
     <Compile Include="Behaviors\BLTNemesisBehavior.cs" />
     <Compile Include="Behaviors\BLTTroopAscensionBehavior.cs" />
     <Compile Include="Actions\Bounty.cs" />
