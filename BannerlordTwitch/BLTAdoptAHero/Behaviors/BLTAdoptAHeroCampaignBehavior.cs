@@ -1191,6 +1191,20 @@ namespace BLTAdoptAHero
         public IEnumerable<CharacterObject> GetRetinue(Hero hero)
             => GetHeroData(hero).Retinue.Select(r => r.TroopType);
 
+        /// <summary>
+        /// Removes a single troop of this type from the hero's retinue. Used when a retinue member
+        /// is promoted into a real character - the slot is spent, not duplicated.
+        /// Returns true if one was actually removed.
+        /// </summary>
+        public bool RemoveRetinueTroop(Hero hero, CharacterObject troopType)
+        {
+            var data = GetHeroData(hero);
+            var entry = data.Retinue.FirstOrDefault(r => r.TroopType == troopType);
+            if (entry == null) return false;
+            data.Retinue.Remove(entry);
+            return true;
+        }
+
         [CategoryOrder("Limits", 1),
          CategoryOrder("Costs", 2),
          CategoryOrder("Troop Types", 3)]

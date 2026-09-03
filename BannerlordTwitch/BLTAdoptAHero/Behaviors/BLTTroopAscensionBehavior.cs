@@ -60,26 +60,7 @@ namespace BLTAdoptAHero
 
             newLord.ChangeState(Hero.CharacterStates.Active);
 
-            // A clan of their own, deliberately with no kingdom - Maku asked for a lord who is not
-            // part of any kingdom, and Clan.Kingdom = null is exactly that.
-            string clanName = "{=}Clan of {NAME}".Translate(("NAME", newLord.Name.ToString()));
-            var clan = Clan.CreateClan(clanName);
-            clan.ChangeClanName(new TextObject(clanName), new TextObject(clanName));
-            clan.Culture = newLord.Culture ?? killerCharacter.Culture;
-            clan.Banner = Banner.CreateRandomBanner();
-            clan.Kingdom = null;
-            clan.AddRenown(cfg.TroopAscensionRenown, false);
-            clan.SetInitialHomeSettlement(
-                Settlement.All.Where(s => s.Culture == clan.Culture).SelectRandom()
-                ?? Settlement.All.SelectRandom());
-
-            newLord.Clan = clan;
-            newLord.SetNewOccupation(Occupation.Lord);
-            clan.SetLeader(newLord);
-            clan.IsNoble = true;
-            CampaignEventDispatcher.Instance.OnClanCreated(clan, false);
-
-            newLord.ChangeHeroGold(cfg.TroopAscensionStartingGold);
+            MakeLordOfNewClan(newLord, cfg.TroopAscensionRenown, cfg.TroopAscensionStartingGold);
 
             // Register the rivalry the promotion came from: this lord exists because they killed
             // this hero, so the very first nemesis record should say so.
@@ -87,6 +68,33 @@ namespace BLTAdoptAHero
 
             Log.LogFeedEvent("{=}{TROOP} slew {VICTIM} and has risen as a lord of their own clan!"
                 .Translate(("TROOP", newLord.Name.ToString()), ("VICTIM", victim.Name.ToString())));
+        }
+
+        /// <summary>
+        /// Turns an existing hero into the leader of a brand new clan with no kingdom. Shared by
+        /// the kill-promotion above and the !promote command, so both produce the same kind of
+        /// lord. Mirrors the clan setup in ClanManagement, which is proven to work in this build.
+        /// </summary>
+        public static void MakeLordOfNewClan(Hero hero, int renown, int startingGold)
+        {
+            string clanName = "{=}Clan of {NAME}".Translate(("NAME", hero.Name.ToString()));
+            var clan = Clan.CreateClan(clanName);
+            clan.ChangeClanName(new TextObject(clanName), new TextObject(clanName));
+            clan.Culture = hero.Culture ?? hero.CharacterObject?.Culture;
+            clan.Banner = Banner.CreateRandomBanner();
+            clan.Kingdom = null;
+            clan.AddRenown(renown, false);
+            clan.SetInitialHomeSettlement(
+                Settlement.All.Where(s => s.Culture == clan.Culture).SelectRandom()
+                ?? Settlement.All.SelectRandom());
+
+            hero.Clan = clan;
+            hero.SetNewOccupation(Occupation.Lord);
+            clan.SetLeader(hero);
+            clan.IsNoble = true;
+            CampaignEventDispatcher.Instance.OnClanCreated(clan, false);
+
+            if (startingGold > 0) hero.ChangeHeroGold(startingGold);
         }
 
         private static void SafeCall(Action action)
