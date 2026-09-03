@@ -231,6 +231,14 @@ namespace BLTAdoptAHero
                     }
 
                     GetHeroMissionState(affectedHero).LastAgentState = agentState;
+
+                    // A nameless soldier that lands the killing blow can rise as a lord and become
+                    // this hero's nemesis. Only fires when the killer has no Hero of its own, so
+                    // ordinary lord-vs-hero kills are untouched.
+                    if (agentState == AgentState.Killed || agentState == AgentState.Unconscious)
+                    {
+                        BLTTroopAscension.OnAdoptedHeroKilled(affectedHero, affectorAgent);
+                    }
                 }
 
                 var affectorHero = affectorAgent.GetAdoptedHero();

@@ -36,11 +36,41 @@ namespace BLTAdoptAHero
      CategoryOrder("Kill Streak Rewards", 10),
      CategoryOrder("Achievements", 11),
      CategoryOrder("Shouts", 12),
+     CategoryOrder("Troop Ascension", 13),
      LocDisplayName("{=vDjnDtoL}Common Config")]
     internal class GlobalCommonConfig : IUpdateFromDefault, IDocumentable, INotifyPropertyChanged
     {
         #region Static
         private const string ID = "Adopt A Hero - General Config";
+        #endregion
+
+        #region Troop Ascension
+        [LocDisplayName("{=TrAscEn}Enabled"),
+         LocCategory("Troop Ascension", "{=TrAscCat}Troop Ascension"),
+         LocDescription("{=TrAscEnDesc}When a nameless soldier kills an adopted hero, give them a chance to rise as a lord of their own clan, outside any kingdom, and become that hero's nemesis."),
+         PropertyOrder(1), UsedImplicitly]
+        public bool TroopAscensionEnabled { get; set; } = false;
+
+        [LocDisplayName("{=TrAscCh}Chance Percent"),
+         LocCategory("Troop Ascension", "{=TrAscCat}Troop Ascension"),
+         LocDescription("{=TrAscChDesc}Chance that a nameless soldier who kills an adopted hero is promoted to a lord. Keep it low - every promotion creates a permanent clan in the campaign."),
+         PropertyOrder(2), Range(0f, 100f), UsedImplicitly]
+        public float TroopAscensionChancePercent { get; set; } = 5f;
+
+        [LocDisplayName("{=TrAscRen}Starting Renown"),
+         LocCategory("Troop Ascension", "{=TrAscCat}Troop Ascension"),
+         LocDescription("{=TrAscRenDesc}Renown the new clan starts with."),
+         PropertyOrder(3), Range(0, 10000), UsedImplicitly]
+        public int TroopAscensionRenown { get; set; } = 150;
+
+        [LocDisplayName("{=TrAscGold}Starting Gold"),
+         LocCategory("Troop Ascension", "{=TrAscCat}Troop Ascension"),
+         LocDescription("{=TrAscGoldDesc}Gold the new lord starts with, so they can actually raise a party."),
+         PropertyOrder(4), Range(0, 1000000), UsedImplicitly]
+        public int TroopAscensionStartingGold { get; set; } = 10000;
+        #endregion
+
+        #region Static
 
         internal static void Register() => ActionManager.RegisterGlobalConfigType(ID, typeof(GlobalCommonConfig));
         internal static GlobalCommonConfig Get() => ActionManager.GetGlobalConfig<GlobalCommonConfig>(ID);
