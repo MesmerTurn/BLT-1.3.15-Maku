@@ -368,6 +368,8 @@
     <Compile Include="Behaviors\BLTMapEventBehavior.cs" />
     <Compile Include="Behaviors\BLTNemesisBehavior.cs" />
     <Compile Include="Behaviors\BLTTroopAscensionBehavior.cs" />
+    <Compile Include="Actions\Util\BossNamePool.cs" />
+    <Compile Include="Behaviors\BLTBossMissionBehavior.cs" />
     <Compile Include="Actions\Bounty.cs" />
     <Compile Include="Behaviors\BLTBountyBehavior.cs" />
     <Compile Include="Behaviors\BLTAdoptAHeroCampaignBehavior.cs" />

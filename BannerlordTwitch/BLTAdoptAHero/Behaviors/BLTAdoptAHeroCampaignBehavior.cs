@@ -1205,6 +1205,19 @@ namespace BLTAdoptAHero
             return true;
         }
 
+        /// <summary>
+        /// Same as <see cref="RemoveRetinueTroop"/> but for the elite retinue list, which this
+        /// build keeps separately from the normal one.
+        /// </summary>
+        public bool RemoveEliteRetinueTroop(Hero hero, CharacterObject troopType)
+        {
+            var data = GetHeroData(hero);
+            var entry = data.Retinue2.FirstOrDefault(r => r.TroopType == troopType);
+            if (entry == null) return false;
+            data.Retinue2.Remove(entry);
+            return true;
+        }
+
         [CategoryOrder("Limits", 1),
          CategoryOrder("Costs", 2),
          CategoryOrder("Troop Types", 3)]

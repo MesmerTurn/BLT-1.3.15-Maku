@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using BannerlordTwitch.Helpers;
-using Helpers;
 using BannerlordTwitch.Util;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Party;
@@ -26,6 +25,9 @@ namespace BLTAdoptAHero
 
         private int firedToday;
         private int lastDay = -1;
+        private int failures;
+        private bool disabled;
+        private const int MaxFailures = 3;
 
         public override void RegisterEvents()
         {
@@ -38,8 +40,11 @@ namespace BLTAdoptAHero
         {
             try
             {
+                if (disabled) return;
+
                 var cfg = GlobalMapEventConfig.Get();
                 if (cfg?.Enabled != true) return;
+                if (Campaign.Current == null) return;
                 if (Mission.Current != null) return;
 
                 var party = MobileParty.MainParty;
@@ -54,10 +59,7 @@ namespace BLTAdoptAHero
                 if (firedToday >= cfg.MaxEventsPerDay) return;
 
                 var terrain = GetCurrentTerrain(party);
-                var nearest = SettlementHelper.FindNearestSettlementToMobileParty(party, MobileParty.NavigationType.Default);
-                float nearestDistance = nearest == null
-                    ? float.MaxValue
-                    : party.GetPosition2D.Distance(nearest.GetPosition2D);
+                var (nearest, nearestDistance) = FindNearestSettlement(party);
 
                 foreach (var ev in cfg.ValidEvents.OrderBy(_ => MBRandom.RandomFloat))
                 {
@@ -73,8 +75,42 @@ namespace BLTAdoptAHero
             }
             catch (Exception ex)
             {
-                Log.Exception($"{nameof(BLTMapEventBehavior)}", ex);
+                // A cosmetic feature must never be able to end a campaign: after a few failures
+                // it stops running for the rest of the session rather than throwing every hour.
+                failures++;
+                Log.Exception($"{nameof(BLTMapEventBehavior)} (failure {failures})", ex);
+                if (failures >= MaxFailures)
+                {
+                    disabled = true;
+                    Log.LogFeedSystem("[Map Events] Disabled for this session after repeated errors.");
+                }
             }
+        }
+
+        /// <summary>
+        /// Nearest settlement by straight-line distance.
+        ///
+        /// Deliberately NOT SettlementHelper.FindNearestSettlementToMobileParty: that resolves
+        /// navigation capability through the party's clan, and a null anywhere on that path throws
+        /// inside the campaign tick, which crashed Maku's game. Distance needs none of that.
+        /// </summary>
+        private static (Settlement settlement, float distance) FindNearestSettlement(MobileParty party)
+        {
+            Settlement best = null;
+            float bestDistance = float.MaxValue;
+            var from = party.GetPosition2D;
+
+            foreach (var s in Settlement.All)
+            {
+                if (s == null) continue;
+                float d = from.Distance(s.GetPosition2D);
+                if (d < bestDistance)
+                {
+                    bestDistance = d;
+                    best = s;
+                }
+            }
+            return (best, bestDistance);
         }
 
         private static TerrainType GetCurrentTerrain(MobileParty party)

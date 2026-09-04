@@ -79,6 +79,7 @@ namespace BLTAdoptAHero
                 mission.AddMissionBehavior(new BLTAdoptAHeroCommonMissionBehavior());
                 mission.AddMissionBehavior(new BLTAdoptAHeroCustomMissionBehavior());
                 mission.AddMissionBehavior(new BLTSummonBehavior());
+                mission.AddMissionBehavior(new BLTBossMissionBehavior());
                 mission.AddMissionBehavior(new BLTRemoveAgentsBehavior());
                 mission.AddMissionBehavior(new BLTHeroPowersMissionBehavior());
                 mission.AddMissionBehavior(new BLTHeroDetachmentBehavior());

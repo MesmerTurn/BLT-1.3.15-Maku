@@ -99,8 +99,12 @@ namespace BLTAdoptAHero
                 return;
             }
 
+            // Both lists count: Maku asked for elite retinue to be promotable as well, and this
+            // build keeps the elite roster separate from the normal one.
             var retinue = BLTAdoptAHeroCampaignBehavior.Current.GetRetinue(adoptedHero).ToList();
-            if (retinue.Count == 0)
+            var eliteRetinue = BLTAdoptAHeroCampaignBehavior.Current.GetRetinue2(adoptedHero).ToList();
+            var all = retinue.Concat(eliteRetinue).ToList();
+            if (all.Count == 0)
             {
                 onFailure("{=promote014}You have no retinue to promote".Translate());
                 return;
@@ -115,8 +119,10 @@ namespace BLTAdoptAHero
                 return;
             }
 
-            // Promote the best of the retinue - the viewer paid for a character, not a lottery.
-            var troopType = retinue.OrderByDescending(t => t.Level).First();
+            // Promote the best troop the viewer has, elite included - they paid for a character,
+            // not a lottery.
+            var troopType = all.OrderByDescending(t => t.Level).First();
+            bool fromElite = eliteRetinue.Contains(troopType) && !retinue.Contains(troopType);
 
             try
             {
@@ -148,7 +154,16 @@ namespace BLTAdoptAHero
 
                 // Only charge, and only consume the retinue slot, once the promotion succeeded.
                 BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(adoptedHero, -cost, true);
-                BLTAdoptAHeroCampaignBehavior.Current.RemoveRetinueTroop(adoptedHero, troopType);
+                // Take it out of whichever list it came from, so the slot is spent once and the
+                // troop is not duplicated between the two rosters.
+                if (fromElite)
+                {
+                    BLTAdoptAHeroCampaignBehavior.Current.RemoveEliteRetinueTroop(adoptedHero, troopType);
+                }
+                else if (!BLTAdoptAHeroCampaignBehavior.Current.RemoveRetinueTroop(adoptedHero, troopType))
+                {
+                    BLTAdoptAHeroCampaignBehavior.Current.RemoveEliteRetinueTroop(adoptedHero, troopType);
+                }
 
                 onSuccess(asLord
                     ? "{=promote017}{NAME} has risen from your retinue as a lord of their own clan!"
