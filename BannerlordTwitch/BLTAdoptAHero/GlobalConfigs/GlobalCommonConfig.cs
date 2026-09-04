@@ -46,7 +46,7 @@ namespace BLTAdoptAHero
          LocCategory("Boss", "{=}Boss"),
          LocDescription("{=}Whether random bosses can appear in battles at all"),
          PropertyOrder(1), UsedImplicitly]
-        public bool BossEnabled { get; set; } = false;
+        public bool BossEnabled { get; set; } = true;
 
         [LocDisplayName("{=}Can Spawn On Ally Side"),
          LocCategory("Boss", "{=}Boss"),

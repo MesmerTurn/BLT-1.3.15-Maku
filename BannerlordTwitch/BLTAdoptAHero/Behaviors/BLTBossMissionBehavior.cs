@@ -109,6 +109,45 @@ namespace BLTAdoptAHero
         private const float SpawnGiveUpSeconds = 45f;
 
 
+        /// <summary>
+        /// Effect for a boss whose name carries none of its own - which is every figure in the
+        /// historical roster. Common is deliberately left plain: if everything glows, nothing does,
+        /// and the effect should be what tells the player something serious just turned up.
+        /// </summary>
+        private static IEnumerable<ParticleEffectDef> EffectsForRarity(BossRarity rarity)
+        {
+            switch (rarity)
+            {
+                case BossRarity.Legendary:
+                    return new[]
+                    {
+                        new ParticleEffectDef
+                        {
+                            Name = "psys_game_burning_agent",
+                            AttachPoint = ParticleEffectDef.AttachPointEnum.OnBody
+                        },
+                        new ParticleEffectDef
+                        {
+                            Name = "psys_torch_fire_moving",
+                            AttachPoint = ParticleEffectDef.AttachPointEnum.OnWeapon
+                        },
+                    };
+
+                case BossRarity.Epic:
+                    return new[]
+                    {
+                        new ParticleEffectDef
+                        {
+                            Name = "psys_campfire_sparks",
+                            AttachPoint = ParticleEffectDef.AttachPointEnum.OnWeapon
+                        },
+                    };
+
+                default:
+                    return Enumerable.Empty<ParticleEffectDef>();
+            }
+        }
+
         private static bool SideIsPopulated(Team team)
             => team?.ActiveAgents?.Any(a => a.IsActive() && a.IsHuman) == true;
 
@@ -367,6 +406,7 @@ namespace BLTAdoptAHero
             try
             {
                 var effects = nameEntry.ParticleEffects.ToList();
+                if (effects.Count == 0) effects = EffectsForRarity(rarity).ToList();
                 if (effects.Count > 0)
                 {
                     bossPfx = new AgentPfx(agent, effects);
